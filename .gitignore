@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyd
+*.pyo
+*.pycache/
+*.log
+
+# Virtual Environment
+venv/
+env/
+.venv/
+.env/
+
+# Django
+*.sqlite3
+db.sqlite3
+*.pyc
+*.log
+*.pot
+*.mo
+*.pyc
+*.pyo
+*.pyd
+*.coverage
+htmlcov/
+media/
+staticfiles/
+
+# Migrations
+*/migrations/*.py
+*/migrations/*.pyc
+!*/migrations/__init__.py
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# MacOS
+.DS_Store
+
+# Environment variables
+.env
+.env.*
+
+# Node / Frontend (если используешь Tailwind CLI)
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
+# pycache
+__pycache__/

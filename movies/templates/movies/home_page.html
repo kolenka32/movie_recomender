@@ -1,0 +1,22 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}MovieRec{% endblock %}
+
+{% block content %}
+<form method="get">
+    <input type="text" name="q" placeholder="Введите название фильма">
+    <button type="submit">Найти</button>
+</form>
+
+{% if movie %}
+    <h2>{{ movie.Title }} ({{ movie.Year }})</h2>
+    <img src="{{ movie.Poster }}" alt="">
+    <p><strong>Жанр:</strong> {{ movie.Genre }}</p>
+    <p><strong>Рейтинг IMDb:</strong> {{ movie.imdbRating }}</p>
+    <p>{{ movie.Plot }}</p>
+{% endif %}
+
+{% if error %}
+    <p style="color:red;">{{ error }}</p>
+{% endif %}
+{% endblock %}
