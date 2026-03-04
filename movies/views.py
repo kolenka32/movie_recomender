@@ -1,10 +1,15 @@
-from django.views.generic import TemplateView
-from django.shortcuts import render
-from django.conf import settings
-import requests
-from googletrans import Translator  # pip install googletrans==4.0.0-rc1
+import traceback
 
-API_KEY = settings.OMDB_API_KEY
+from django.conf import settings
+from django.shortcuts import render
+from django.views.generic import TemplateView
+import requests
+
+from .models import Movie
+from .services.tmdb import search_movie, get_movie_detail
+from .services.movie_service import save_movie_from_tmdb, download_and_save_poster
+from movies.services.bulk_import_service import fetch_bulk_movies
+from django.http import HttpResponse
 
 class HomeView(TemplateView):
     template_name = "movies/home_page.html"
@@ -15,27 +20,35 @@ class HomeView(TemplateView):
         error = None
 
         if query:
-            # Переводим с русского на английский
-            translator = Translator()
-            translated = translator.translate(query, src='ru', dest='en').text
+            movie = Movie.objects.filter(title__icontains=query).first()
 
-            url = "https://www.omdbapi.com/"
-            params = {
-                "apikey": API_KEY,
-                "t": translated,  # поиск на английском
-                "plot": "full",
-                "r": "json"
-            }
+            if not movie:
+                try:
+                    search_data = search_movie(query)
 
-            response = requests.get(url, params=params)
-            data = response.json()
+                    if search_data["results"]:
+                        movie_id = search_data["results"][0]["id"]
+                        detail_data = get_movie_detail(movie_id)
+                        movie = save_movie_from_tmdb(detail_data)
 
-            if data.get("Response") == "True":
-                movie = data
-            else:
-                error = data.get("Error")
+                    else:
+                        error = "Фильм не найден"
+                        print(error)
 
-        return render(request, self.template_name, {
-            "movie": movie,
-            "error": error
-        })
+
+                except Exception as e:
+                    print("TMDB ERROR:", e)
+                    traceback.print_exc()
+                    error = str(e)
+
+
+
+        print('Запроса нет')
+        return render(request, self.template_name, {"movie": movie, "error": error})
+
+
+
+
+def import_movies_view(request):
+    total = fetch_bulk_movies(limit=2000)
+    return HttpResponse(f"Импортировано фильмов: {total}")
