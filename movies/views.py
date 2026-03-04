@@ -1,6 +1,7 @@
 import traceback
 
 from django.conf import settings
+from django.contrib.postgres.search import TrigramSimilarity
 from django.shortcuts import render
 from django.views.generic import TemplateView
 import requests
@@ -20,33 +21,37 @@ class HomeView(TemplateView):
         error = None
 
         if query:
-            movie = Movie.objects.filter(title__icontains=query).first()
+            try:
+                search_data = search_movie(query)
+
+                if search_data.get("results"):
+                    movie_id = search_data["results"][0]["id"]
+                    detail_data = get_movie_detail(movie_id)
+                    movie = save_movie_from_tmdb(detail_data)
+
+                else:
+                    print("TMDB ничего не вернул")
+
+            except Exception as e:
+                print("TMDB ERROR:", e)
+                traceback.print_exc()
 
             if not movie:
-                try:
-                    search_data = search_movie(query)
+                movie = (
+                    Movie.objects
+                    .annotate(similarity=TrigramSimilarity("title", query))
+                    .filter(similarity__gt=0.3)
+                    .order_by("-similarity")
+                    .first()
+                )
 
-                    if search_data["results"]:
-                        movie_id = search_data["results"][0]["id"]
-                        detail_data = get_movie_detail(movie_id)
-                        movie = save_movie_from_tmdb(detail_data)
+                if not movie:
+                    error = "Фильм не найден"
 
-                    else:
-                        error = "Фильм не найден"
-                        print(error)
-
-
-                except Exception as e:
-                    print("TMDB ERROR:", e)
-                    traceback.print_exc()
-                    error = str(e)
-
-
-
-        print('Запроса нет')
-        return render(request, self.template_name, {"movie": movie, "error": error})
-
-
+        return render(request, self.template_name, {
+            "movie": movie,
+            "error": error
+        })
 
 
 def import_movies_view(request):
