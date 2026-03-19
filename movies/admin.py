@@ -12,11 +12,11 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ("title", "original_title", "release_date", "vote_average", "poster_preview")
+    list_display = ("title", "original_title", "release_date", "vote_average", "poster_preview", "backdrop_preview")
     list_filter = ("release_date", "adult", "genres")
-    search_fields = ("title", "original_title")
+    search_fields = ("id", "title", "original_title")
     filter_horizontal = ("genres",)
-    readonly_fields = ("tmdb_id", "poster_preview", "release_date", "overview",
+    readonly_fields = ("tmdb_id", "poster_preview", "backdrop_preview", "release_date",
                        "poster_path", "backdrop_path", "vote_average", "vote_count",
                        "popularity", "adult", "created_at", "updated_at"
 
@@ -37,8 +37,9 @@ class MovieAdmin(admin.ModelAdmin):
             )
         }),
         ("Постер", {
-            "fields": ("local_poster", "poster_preview")
+            "fields": ("local_poster", "poster_preview", "local_backdrop", "backdrop_preview")
         }),
+
         ("Жанры", {
             "fields": ("genres",)
         }),
@@ -55,8 +56,23 @@ class MovieAdmin(admin.ModelAdmin):
         if obj.poster_path:
             return format_html(
                 '<img src="{}" style="height:120px; border-radius:6px;" />',
-                obj.poster_url
+                obj.poster_path
             )
         return "—"
 
     poster_preview.short_description = "Постер"
+
+    def backdrop_preview(self, obj):
+        if obj.local_backdrop:
+            return format_html(
+                '<img src="{}" style="height:90px; border-radius:6px;" />',
+                obj.local_backdrop.url
+            )
+        if obj.backdrop_path:
+            return format_html(
+                '<img src="{}" style="height:120px; border-radius:6px;" />',
+                obj.backdrop_path
+            )
+        return '—'
+
+    backdrop_preview.short_description = "Фон"

@@ -1,0 +1,39 @@
+<div class="min-w-[180px] group relative">
+    <a href="/movie/{{ movie.id }}/">
+        <div class="aspect-[2/3] rounded-md overflow-hidden">
+
+            {% if movie.local_poster %}
+                <img
+                    src="{{ movie.local_poster.url }}"
+                    loading="lazy"
+                    class="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                >
+            {% else %}
+                <img
+                    src="{{ movie.poster_path }}"
+                    loading="lazy"
+                    class="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                >
+            {% endif %}
+        </div>
+        <div class="mt-2">
+
+            <h3 class="text-sm font-medium line-clamp-1">
+                {{ movie.title }}
+            </h3>
+
+            <div class="text-xs text-gray-400 flex gap-2">
+
+                {% if movie.vote_average %}
+                    <span class="text-green-500">
+                        {{ movie.vote_average|floatformat:1 }}
+                    </span>
+                {% endif %}
+
+                {% if movie.release_date %}
+                    <span>{{ movie.release_date|date:"Y" }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+</div>

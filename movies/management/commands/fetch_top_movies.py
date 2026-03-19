@@ -12,7 +12,12 @@ class Command(BaseCommand):
         total_needed = 2000
         per_page = 20  # TMDB по умолчанию возвращает 20 фильмов на страницу
 
-        endpoints = ["/movie/popular", "/movie/now_playing"]
+        endpoints = [
+            "/movie/popular",
+            "/movie/top_rated",
+            "/movie/now_playing",
+            "/movie/upcoming"
+        ]
 
         for endpoint in endpoints:
             page = 1

@@ -26,6 +26,7 @@ class Movie(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     local_poster = models.ImageField(upload_to="posters/", blank=True, null=True)
+    local_backdrop = models.ImageField(upload_to="backdrops/", blank=True, null=True)
 
     class Meta:
         ordering = ["-release_date"]
@@ -42,3 +43,7 @@ class Movie(models.Model):
         poster_url_i = f"https://image.tmdb.org/t/p/w500{self.poster_path}"
         return poster_url_i
 
+    @property
+    def backdrop_url(self):
+        backdrop_url_i = f"https://image.tmdb.org/t/p/original{self.backdrop_path}"
+        return backdrop_url_i
