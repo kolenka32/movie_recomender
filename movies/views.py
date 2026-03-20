@@ -1,10 +1,13 @@
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.views.generic import TemplateView
-import requests
-
-import re
+from django.db.models import Count
 from django.contrib.postgres.search import TrigramSimilarity
 
+import requests
+from datetime import date
+import random
+import re
 import traceback
 
 from .models import Movie
@@ -32,7 +35,18 @@ class HomeView(TemplateView):
             popular_movies = Movie.objects.order_by("-popularity")[:20]
             top_movies = Movie.objects.order_by("-vote_average")[:20]
             new_movies = Movie.objects.order_by("-release_date")[:20]
-            hero_movie = Movie.objects.order_by("?").first()
+
+            qs = Movie.objects.filter(
+                release_date__year__gte=2000,
+                vote_count__gte=100,
+                adult=False,
+            )
+
+            count = qs.count()
+
+            if count > 0:
+                random_index = random.randint(0, count - 1)
+                hero_movie = qs[random_index]
 
 
         # ПОИСК
@@ -52,11 +66,9 @@ class HomeView(TemplateView):
                     detail_data = get_movie_detail(movie_id)
                     hero_movie = save_movie_from_tmdb(detail_data)
 
-                elif not search_data.get("results"):
-                    hero_movie = Movie.objects.order_by("?").first()
                 else:
+                    hero_movie = Movie.objects.order_by("?").first()
                     error = "Фильм не найден"
-                hero_movie = hero_movie
 
             except Exception as e:
                 print("TMDB ERROR:", e)
@@ -74,7 +86,7 @@ class HomeView(TemplateView):
             else:
                 similar_movies = queryset.order_by("-similarity")[:20]
 
-        return render(request, self.template_name, {
+        return TemplateResponse(request, self.template_name, {
 
             "hero_movie": hero_movie,
             "query": bool(query),
@@ -92,4 +104,13 @@ class MovieDetailView(TemplateView):
     context_object_name = "movie"
 
     def get(self, request, *args, **kwargs):
-        ...
+        movie_id = kwargs.get("movie_id")
+
+        try:
+            movie = Movie.objects.get(id=movie_id)
+        except Movie.DoesNotExist:
+            movie = None
+
+        return TemplateResponse(request, self.template_name, {
+            "movie": movie,
+        })

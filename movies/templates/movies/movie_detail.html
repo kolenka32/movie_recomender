@@ -1,0 +1,129 @@
+{% extends "movies/base.html" %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+
+    <!-- BACKDROP -->
+    {% if movie.local_backdrop %}
+    <div class="relative rounded-3xl overflow-hidden mb-12">
+
+        <!-- IMAGE -->
+        <img
+            src="{{ movie.local_backdrop.url }}"
+            class="w-full h-[420px] object-cover scale-105"
+        >
+
+        <!-- DARK OVERLAY -->
+        <div class="absolute inset-0 bg-black/60"></div>
+
+        <!-- GRADIENT FADE -->
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"></div>
+
+        <!-- SOFT BLUR LAYER -->
+        <div class="absolute inset-0 backdrop-blur-[2px]"></div>
+
+        <!-- TITLE -->
+        <div class="absolute bottom-0 p-10">
+            <h1 class="text-5xl font-bold text-white tracking-tight">
+                {{ movie.title }}
+            </h1>
+
+            {% if movie.original_title %}
+                <p class="text-gray-400 mt-2 text-lg">
+                    {{ movie.original_title }}
+                </p>
+            {% endif %}
+        </div>
+
+    </div>
+    {% endif %}
+
+    <!-- MAIN INFO -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+        <!-- POSTER -->
+        <div>
+            {% if movie.local_poster %}
+                <img src="{{ movie.local_poster.url }}"
+                     class="rounded-3xl shadow-2xl">
+            {% else %}
+                <img src="{{ movie.poster_url }}"
+                     class="rounded-3xl shadow-2xl">
+            {% endif %}
+        </div>
+
+        <!-- DETAILS -->
+        <div class="md:col-span-2 space-y-8">
+
+            <!-- RATING (premium style) -->
+            <div class="flex items-center gap-6">
+
+                <div class="px-5 py-2 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 text-white text-sm">
+                    {{ movie.vote_average }}
+                </div>
+
+                <div class="text-gray-500 text-sm">
+                    {{ movie.vote_count }} оценок
+                </div>
+
+            </div>
+
+            <!-- META -->
+            <div class="flex flex-wrap gap-5 text-sm text-gray-400">
+                {% if movie.release_date %}
+                    <span>{{ movie.release_date }}</span>
+                {% endif %}
+
+                {% if movie.adult %}
+                    <span class="text-red-400">18+</span>
+                {% endif %}
+            </div>
+
+            <!-- GENRES -->
+            {% if movie.genres.all %}
+            <div class="flex flex-wrap gap-3">
+                {% for genre in movie.genres.all %}
+                    <span class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-xl text-sm text-gray-200 backdrop-blur">
+                        {{ genre.name }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- OVERVIEW (premium glass) -->
+            {% if movie.overview %}
+            <div class="relative">
+
+                <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl"></div>
+
+                <div class="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl">
+
+                    <h2 class="text-2xl font-semibold mb-4 text-white">
+                        О фильме
+                    </h2>
+
+                    <p class="text-gray-300 leading-relaxed text-lg">
+                        {{ movie.overview }}
+                    </p>
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- BACK BUTTON -->
+    <div class="mt-14">
+        <a href="/"
+           class="inline-block bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 py-3 rounded-xl transition backdrop-blur">
+            ← Назад
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

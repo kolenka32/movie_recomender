@@ -1,5 +1,7 @@
-<div class="min-w-[180px] group relative">
-    <a href="/movie/{{ movie.id }}/">
+<div class="min-w-[180px] group relative cursor-pointer">
+    <a hx-get="{% url 'movies:movie_detail' movie.id %}"
+        hx-target="body"
+        hx-push-url="true">
         <div class="aspect-[2/3] rounded-md overflow-hidden">
 
             {% if movie.local_poster %}

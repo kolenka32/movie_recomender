@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Netflix{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body class="bg-[#141414] text-white min-h-screen">
     <!-- Netflix-style header -->
@@ -59,9 +60,9 @@
 
     <!-- Main content with top padding for fixed header -->
     <main class="pt-24 px-4 md:px-16 pb-16">
-        {% block content %}
+            {% block content %}
 
-        {% endblock %}
+            {% endblock %}
     </main>
 </body>
 </html>

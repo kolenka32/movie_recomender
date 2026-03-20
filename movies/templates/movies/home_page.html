@@ -32,7 +32,11 @@
 
             <div class="absolute bottom-20 left-10 max-w-xl">
                 <h1 class="text-5xl font-bold mb-4">
-                    {{ hero_movie.title }}
+                    {% if hero_movie %}
+                        {{ hero_movie.title }}
+                    {% else %}
+                        {{ hero_movie.name }}
+                    {% endif %}
                 </h1>
 
                 <div class="flex gap-4 text-gray-300 mb-4">
@@ -51,8 +55,10 @@
                     {{ hero_movie.overview }}
                 </p>
 
-                <a href="/movie/{{ hero_movie.id }}/"
-                   class="bg-white text-black px-8 py-3 rounded font-semibold hover:bg-gray-200">
+                <a hx-get="{% url 'movies:movie_detail' hero_movie.id %}"
+                   hx-target="body"
+                   hx-push-url="true"
+                   class="bg-white text-black px-8 py-3 rounded font-semibold hover:bg-gray-200 cursor-pointer">
                     Подробнее
                 </a>
             </div>
@@ -94,7 +100,11 @@
 
                 <div class="absolute bottom-20 left-10 max-w-xl">
                     <h1 class="text-5xl font-bold mb-4">
-                        {{ hero_movie.title }}
+                        {% if hero_movie %}
+                            {{ hero_movie.title }}
+                        {% else %}
+                            {{ hero_movie.name }}
+                        {% endif %}
                     </h1>
 
                     {% if hero_movie.vote_average %}
@@ -107,8 +117,10 @@
                         {{ hero_movie.overview }}
                     </p>
 
-                    <a href="/movie/{{ hero_movie.id }}/"
-                       class="bg-white text-black px-8 py-3 rounded font-semibold hover:bg-gray-200">
+                    <a  hx-get="{% url 'movies:movie_detail' hero_movie.id %}"
+                        hx-target="body"
+                        hx-push-url="true"
+                       class="bg-white text-black px-8 py-3 rounded font-semibold hover:bg-gray-200 cursor-pointer">
                         Подробнее
                     </a>
                 </div>
