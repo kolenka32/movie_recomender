@@ -2,6 +2,7 @@ from django.utils.dateparse import parse_date
 from movies.models import Movie, Genre
 import requests
 from django.core.files.base import ContentFile
+from django.db.models import Q, Count
 
 #Скачивание фильма из TMDB в локальную бд
 
@@ -52,22 +53,17 @@ def save_movie_from_tmdb(data):
         )
         movie.genres.add(genre)
 
-
     return movie
-
 
 
 def download_and_save_poster(movie):
 
     if not movie.poster_path:
         return
-
     if movie.local_poster:
         return
-
     if not movie.backdrop_path:
         return
-
     if movie.local_backdrop:
         return
 
@@ -117,7 +113,26 @@ def download_and_save_poster(movie):
         except requests.RequestException as e:
             print("Ошибка скачивания:", e)
 
-
-
     except requests.RequestException as e:
         print("Ошибка скачивания:", e)
+
+
+def get_recommendation_for_user(user, limit=20):
+    fav_movies = user.favorite_movies.all()
+    fav_genres = user.favorite_genres.all()
+
+    excluded_ids = fav_movies.values_list("id", flat=True)
+
+    recommendations = (
+        Movie.objects.filter(
+            Q(genres__in=fav_genres) |
+            Q(genres__in=Genre.objects.filter(movie__in=fav_movies))
+        )
+        .exclude(id__in=excluded_ids)
+        .annotate(score=Count('genres'))
+        .order_by('-score', '-vote_average', '-popularity')
+        .distinct()[:limit]
+        )
+
+
+    return recommendations

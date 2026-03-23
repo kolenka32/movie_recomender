@@ -140,3 +140,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
+
+
+AUTH_USER_MODEL = "users.User"

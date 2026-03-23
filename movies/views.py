@@ -12,7 +12,7 @@ import traceback
 
 from .models import Movie
 from .services.tmdb import search_movie, get_movie_detail
-from .services.movie_service import save_movie_from_tmdb
+from .services.movie_service import save_movie_from_tmdb, get_recommendation_for_user
 
 
 class HomeView(TemplateView):
@@ -28,7 +28,7 @@ class HomeView(TemplateView):
         top_movies = None
         new_movies = None
         error = None
-
+        recommendations = None
 
         # ГЛАВНАЯ БЕЗ ПОИСКА
         if not query:
@@ -87,7 +87,6 @@ class HomeView(TemplateView):
                 similar_movies = queryset.order_by("-similarity")[:20]
 
         return TemplateResponse(request, self.template_name, {
-
             "hero_movie": hero_movie,
             "query": bool(query),
             "similar_movies": similar_movies,
@@ -95,6 +94,7 @@ class HomeView(TemplateView):
             "top_movies": top_movies,
             "new_movies": new_movies,
             "error": error,
+            "recommendations": recommendations,
         })
 
 
