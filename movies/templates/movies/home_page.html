@@ -1,6 +1,14 @@
 {% extends "movies/base.html" %}
 
-{% block title %}{{ movie.title }}{% endblock %}
+
+{% block title %}
+    {% if query %}
+        {{ movie.title }}
+    {% else %}
+        {{ title }}
+    {% endif %}
+{% endblock %}
+
 
 {% block content %}
 

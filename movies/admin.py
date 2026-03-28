@@ -2,6 +2,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Movie, Genre
+from django.contrib import admin
+from .models import Movie, Genre
+
 
 
 @admin.register(Genre)

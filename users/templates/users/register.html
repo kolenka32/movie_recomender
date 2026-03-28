@@ -1,0 +1,362 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+ <style>
+        /* Кастомные доработки для минималистичного премиум-стиля Netflix */
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000);
+            font-family: 'Inter', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+        }
+        /* Эффект свечения для кнопки при фокусе/наведении */
+        .btn-glow:hover {
+            box-shadow: 0 0 12px rgba(229, 9, 20, 0.6);
+            transition: box-shadow 0.25s ease, transform 0.2s ease;
+            transform: scale(1.01);
+        }
+        .btn-glow:active {
+            transform: scale(0.98);
+        }
+        /* Плавный фокус для полей ввода */
+        .input-premium:focus {
+            outline: none;
+            border-color: #e50914;
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+            transition: all 0.2s;
+        }
+        /* Анимация появления формы */
+        @keyframes subtleFadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .form-card {
+            animation: subtleFadeUp 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+        }
+        /* Убираем стандартный крестик у пароля в некоторых браузерах */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+        /* Стиль для ссылок и надписей */
+        .hover-underline:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        /* Стили для ошибок валидации */
+        .error-message {
+            color: #e50914;
+            font-size: 11px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .error-message svg {
+            width: 12px;
+            height: 12px;
+        }
+        input.error {
+            border-color: #e50914 !important;
+            background-color: rgba(229, 9, 20, 0.05) !important;
+        }
+        /* Стили для пароля и подтверждения */
+        .password-requirements {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 3px;
+        }
+        .requirement.valid {
+            color: #10b981;
+        }
+        .requirement.invalid {
+            color: #6b7280;
+        }
+        .requirement svg {
+            width: 12px;
+            height: 12px;
+        }
+        /* Стили для двух колонок (имя и фамилия) */
+        .name-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    </style>
+<div class="antialiased flex items-center justify-center min-h-screen p-5">
+    <!-- Затемнённая декоративная оверлейная текстура -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-red-900/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-80 h-80 bg-neutral-800/20 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Основной контейнер формы -->
+    <div class="relative w-full max-w-md z-10">
+        <!-- Логотип -->
+        <div class="text-center mb-8 md:mb-10">
+            <div class="inline-flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 276" class="h-9 w-auto" fill="none">
+                    <path d="M140.803 258.904c-15.404 2.705-31.079 3.516-47.294 5.676l-49.458-144.476v138.8c-15.516 1.763-30.93 3.763-46.418 5.645v-258.8h44.295l52.355 152.465 52.355-152.465h44.298v258.8zM370.893 217.772c-5.562 22.172-20.203 38.503-44.484 38.503-24.279 0-38.922-16.331-44.484-38.503h88.968zm-103.239-36.18c5.317-24.896 20.619-40.339 44.755-40.339 24.136 0 39.438 15.443 44.755 40.339h-89.51zm103.239 26.082v-26.082h-103.239v26.082h103.239zm49.854-79.699h44.253v258.8c-15.402 1.762-30.888 3.762-46.418 5.645v-138.8l-49.458 144.476h-44.295v-258.8h44.295l52.355 152.465 52.355-152.465zM713.599 217.772c-5.562 22.172-20.203 38.503-44.484 38.503-24.279 0-38.922-16.331-44.484-38.503h88.968zm-103.239-36.18c5.317-24.896 20.619-40.339 44.755-40.339 24.136 0 39.438 15.443 44.755 40.339h-89.51zm103.239 26.082v-26.082h-103.239v26.082h103.239zm60.939-121.783h44.295v258.8c-15.402 1.762-30.888 3.762-46.418 5.645v-138.8l-49.458 144.476h-44.295v-258.8h44.295l52.355 152.465 52.355-152.465zM974.511 258.904c-15.404 2.705-31.079 3.516-47.294 5.676l-49.458-144.476v138.8c-15.516 1.763-30.93 3.763-46.418 5.645v-258.8h44.295l52.355 152.465 52.355-152.465h44.298v258.8z" fill="#E50914"/>
+                </svg>
+            </div>
+            <p class="text-neutral-400 text-xs tracking-wide mt-2 font-light">Создайте аккаунт для премиального доступа</p>
+        </div>
+
+        <!-- Карточка регистрации -->
+        <div class="bg-black/70 backdrop-blur-sm rounded-2xl border border-white/10 shadow-2xl form-card p-8 md:p-10">
+            <h1 class="text-white text-3xl font-semibold tracking-tight mb-6">Регистрация</h1>
+
+            <form action="{% url 'users:register' %}" method="post" class="space-y-5">
+                {% csrf_token %}
+
+                <!-- Имя и Фамилия в две колонки -->
+                <div class="name-fields">
+                    <!-- Имя -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.first_name.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                            {{ form.first_name.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="error-message">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Фамилия -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.last_name.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                            {{ form.last_name.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="error-message">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Имя пользователя -->
+                <div class="space-y-1.5">
+                    <label for="{{ form.username.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                        {{ form.username.label }}
+                    </label>
+                    <div class="relative">
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="error-message">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p class="text-[11px] text-neutral-500 mt-1">Только буквы, цифры и @/./+/-/_</p>
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-1.5">
+                    <label for="{{ form.email.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                        {{ form.email.label }}
+                    </label>
+                    <div class="relative">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="error-message">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Пароль -->
+                <div class="space-y-1.5">
+                    <label for="{{ form.password1.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                        {{ form.password1.label }}
+                    </label>
+                    <div class="relative">
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="error-message">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ form.password1.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="password-requirements">
+                        <div class="requirement" id="req-length">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Минимум 8 символов</span>
+                        </div>
+                        <div class="requirement" id="req-number">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Цифра</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Подтверждение пароля -->
+                <div class="space-y-1.5">
+                    <label for="{{ form.password2.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
+                        {{ form.password2.label }}
+                    </label>
+                    <div class="relative">
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="error-message">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ form.password2.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Кнопка регистрации -->
+                <button type="submit"
+                        class="btn-glow relative w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 ease-out tracking-wide text-base shadow-lg cursor-pointer mt-6">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 00-6 6H2a6 6 0 0112 0h-2a4 4 0 00-8 0 4 4 0 008 0h2a6 6 0 00-6-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                        </svg>
+                        Создать аккаунт
+                    </span>
+                </button>
+
+                <!-- Ссылка на вход -->
+                <div class="pt-3 text-center text-neutral-400 text-sm cursor-pointer">
+                    <span class="opacity-80">Уже есть аккаунт?</span>
+                    <a hx-get="{% url 'users:login' %}"
+                       hx-target="body"
+                       hx-push-url="true"
+                       class="ml-2 text-white font-medium hover:text-red-500 transition-colors hover-underline">Войти</a>
+                </div>
+
+                <!-- Премиум преимущества -->
+                <div class="mt-4 pt-2 border-t border-neutral-800">
+                    <div class="text-center text-xs text-neutral-500 flex items-center justify-center gap-1.5">
+                        <span class="inline-block w-1 h-1 bg-red-600 rounded-full"></span>
+                        Премиальный доступ
+                        <span class="inline-block w-1 h-1 bg-red-600 rounded-full"></span>
+                        Без рекламы
+                        <span class="inline-block w-1 h-1 bg-red-600 rounded-full"></span>
+                        4K + HDR
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Нижний колонтитул -->
+        <div class="mt-8 text-center text-neutral-500 text-xs flex flex-wrap justify-center gap-x-5 gap-y-2">
+            <a href="#" class="hover:text-neutral-300 transition">Справка</a>
+            <a href="#" class="hover:text-neutral-300 transition">Конфиденциальность</a>
+            <a href="#" class="hover:text-neutral-300 transition">Условия использования</a>
+            <span class="text-neutral-600">© Netflix, Inc.</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Клиентская валидация пароля
+    (function() {
+        const passwordInput = document.getElementById('{{ form.password1.id_for_label }}');
+        if (!passwordInput) return;
+
+        const requirements = {
+            length: { regex: /.{8,}/, element: document.getElementById('req-length') },
+            upper: { regex: /[A-Z]/, element: document.getElementById('req-upper') },
+            number: { regex: /[0-9]/, element: document.getElementById('req-number') }
+        };
+
+        function validatePassword() {
+            const value = passwordInput.value;
+
+            for (const [key, req] of Object.entries(requirements)) {
+                if (req.element) {
+                    const isValid = req.regex.test(value);
+                    if (isValid) {
+                        req.element.classList.add('valid');
+                        req.element.classList.remove('invalid');
+                        req.element.querySelector('svg').setAttribute('fill', '#10b981');
+                    } else {
+                        req.element.classList.remove('valid');
+                        req.element.classList.add('invalid');
+                        req.element.querySelector('svg').setAttribute('fill', '#6b7280');
+                    }
+                }
+            }
+        }
+
+        passwordInput.addEventListener('input', validatePassword);
+        validatePassword();
+    })();
+</script>
+
+<style>
+    /* Стили для полей формы Django */
+    input {
+        width: 100%;
+        background-color: rgb(23 23 23 / 0.8);
+        border: 1px solid rgb(64 64 64);
+        border-radius: 0.75rem;
+        padding: 0.875rem 1rem;
+        color: white;
+        transition: all 0.2s;
+    }
+    input:focus {
+        outline: none;
+        border-color: #e50914;
+        box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+    }
+    input.error {
+        border-color: #e50914 !important;
+    }
+    .requirement {
+        transition: color 0.2s;
+    }
+    .requirement.valid {
+        color: #10b981;
+    }
+    .requirement svg {
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}

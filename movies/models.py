@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.indexes import GinIndex
 
 
 class Genre(models.Model):
@@ -33,6 +34,12 @@ class Movie(models.Model):
         indexes = [
             models.Index(fields=["title"]),
             models.Index(fields=["release_date"]),
+
+            GinIndex(
+                fields=["title"],
+                name="movie_title_trgm",
+                opclasses=["gin_trgm_ops"]
+            ),
         ]
 
     def __str__(self):

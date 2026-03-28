@@ -1,0 +1,122 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+
+{% block css %}
+    <style>
+        /* Кастомные доработки для минималистичного премиум-стиля Netflix */
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000);
+            font-family: 'Inter', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+        }
+        /* Эффект свечения для кнопки при фокусе/наведении, без JS */
+        .btn-glow:hover {
+            box-shadow: 0 0 12px rgba(229, 9, 20, 0.6);
+            transition: box-shadow 0.25s ease, transform 0.2s ease;
+            transform: scale(1.01);
+        }
+        .btn-glow:active {
+            transform: scale(0.98);
+        }
+        /* Плавный фокус для полей ввода */
+        .input-premium:focus {
+            outline: none;
+            border-color: #e50914;
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+            transition: all 0.2s;
+        }
+        /* Анимация появления формы */
+        @keyframes subtleFadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .form-card {
+            animation: subtleFadeUp 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+        }
+        /* Убираем стандартный крестик у пароля в некоторых браузерах, сохраняем эстетику */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+        /* Стиль для ссылок и надписей */
+        .hover-underline:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="antialiased flex items-center justify-center min-h-screen p-5">
+    <!-- Основной контейнер формы с премиальной рамкой -->
+    <div class="relative w-full max-w-md z-10">
+        <!-- Декоративный тонкий акцент сверху (логотипный стиль Netflix) -->
+        <div class="text-center mb-8 md:mb-10">
+            <div class="inline-flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 276" class="h-9 w-auto" fill="none">
+                    <path d="M140.803 258.904c-15.404 2.705-31.079 3.516-47.294 5.676l-49.458-144.476v138.8c-15.516 1.763-30.93 3.763-46.418 5.645v-258.8h44.295l52.355 152.465 52.355-152.465h44.298v258.8zM370.893 217.772c-5.562 22.172-20.203 38.503-44.484 38.503-24.279 0-38.922-16.331-44.484-38.503h88.968zm-103.239-36.18c5.317-24.896 20.619-40.339 44.755-40.339 24.136 0 39.438 15.443 44.755 40.339h-89.51zm103.239 26.082v-26.082h-103.239v26.082h103.239zm49.854-79.699h44.253v258.8c-15.402 1.762-30.888 3.762-46.418 5.645v-138.8l-49.458 144.476h-44.295v-258.8h44.295l52.355 152.465 52.355-152.465zM713.599 217.772c-5.562 22.172-20.203 38.503-44.484 38.503-24.279 0-38.922-16.331-44.484-38.503h88.968zm-103.239-36.18c5.317-24.896 20.619-40.339 44.755-40.339 24.136 0 39.438 15.443 44.755 40.339h-89.51zm103.239 26.082v-26.082h-103.239v26.082h103.239zm60.939-121.783h44.295v258.8c-15.402 1.762-30.888 3.762-46.418 5.645v-138.8l-49.458 144.476h-44.295v-258.8h44.295l52.355 152.465 52.355-152.465zM974.511 258.904c-15.404 2.705-31.079 3.516-47.294 5.676l-49.458-144.476v138.8c-15.516 1.763-30.93 3.763-46.418 5.645v-258.8h44.295l52.355 152.465 52.355-152.465h44.298v258.8z" fill="#E50914"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Карточка логина — стекло-эффект, матовый минимализм -->
+        <div class="bg-black/70 backdrop-blur-sm rounded-2xl border border-white/10 shadow-2xl form-card p-8 md:p-10">
+            <h1 class="text-white text-3xl font-semibold tracking-tight mb-6">Войти</h1>
+            
+            <!-- Форма без JS, но с визуальной обратной связью (чисто HTML/CSS) -->
+            <form action="{% url 'users:login' %}" method="post" class="space-y-6">
+                {% csrf_token %}
+                <!-- Поле имя пользователя / email -->
+                <div class="space-y-1.5">
+                    <label for="{{ form.username.id_for_label }}" class="text-neutral-300 text-sm font-medium block">{{ form.username.label }}</label>
+                    <div class="relative group">
+                        {{ form.username }}
+                        <!-- минималистичный декоративный элемент при фокусе -->
+                    </div>
+                    <p class="text-[11px] text-neutral-500 mt-1 hidden">Необязательная подсказка</p>
+                </div>
+                
+                <!-- Поле пароль -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-end">
+                        <label for="{{ form.password.id_for_label }}" class="text-neutral-300 text-sm font-medium block">{{ form.password.label }}</label>
+                    </div>
+                    <div class="relative">
+                        {{ form.password }}
+                        <!-- Минималистичная иконка-глаз НЕ добавлена специально — только минимализм и чистота, без JS -->
+                    </div>
+                    <p class="text-right text-[11px] text-neutral-500 mt-1">8+ символов для безопасности</p>
+                </div>
+                
+                <!-- Кнопка входа в премиальном стиле Netflix -->
+                <button type="submit" 
+                        class="btn-glow relative w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 ease-out tracking-wide text-base shadow-lg cursor-pointer">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Войти
+                    </span>
+                </button>
+                
+                <!-- Подсказка о регистрации / премиум доступе -->
+                <div class="pt-3 text-center text-neutral-400 text-sm cursor-pointer">
+                    <span class="opacity-80">Нет аккаунта?</span>
+                    <a hx-get="{% url 'users:register' %}"
+                       hx-target="body"
+                       hx-push-url="true"
+                       class="ml-2 text-white font-medium hover:text-red-500 transition-colors hover-underline">Зарегистрируйтесь сейчас</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
