@@ -1,0 +1,78 @@
+<div id="movie-actions" class="flex flex-wrap gap-4">
+
+    <!-- WATCHED -->
+    <form
+        hx-post="{% url 'movies:movie_detail' movie.id %}"
+        hx-target="#movie-actions"
+        hx-swap="outerHTML"
+        method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="watched">
+
+        <button type="submit"
+            class="px-5 py-2 rounded-xl border transition
+            {% if interaction.is_watched %}
+                bg-green-500/20 border-green-500 text-green-400
+            {% else %}
+                bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
+            {% endif %}
+        ">
+            {% if interaction.is_watched %}
+                ✔ Просмотрено
+            {% else %}
+                👁 Смотреть
+            {% endif %}
+        </button>
+    </form>
+
+    <!-- FAVORITE -->
+    <form
+        hx-post="{% url 'movies:movie_detail' movie.id %}"
+        hx-target="#movie-actions"
+        hx-swap="outerHTML"
+        method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="favorite">
+
+        <button type="submit"
+            class="px-5 py-2 rounded-xl border transition
+            {% if interaction.is_favorite %}
+                bg-red-500/20 border-red-500 text-red-400
+            {% else %}
+                bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
+            {% endif %}
+        ">
+            {% if interaction.is_favorite %}
+                ❤️ В избранном
+            {% else %}
+                🤍 В избранное
+            {% endif %}
+        </button>
+    </form>
+
+    <!-- LIKED -->
+    <form
+        hx-post="{% url 'movies:movie_detail' movie.id %}"
+        hx-target="#movie-actions"
+        hx-swap="outerHTML"
+        method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="liked">
+
+        <button type="submit"
+            class="px-5 py-2 rounded-xl border transition
+            {% if interaction.is_liked %}
+                bg-yellow-500/20 border-yellow-500 text-yellow-400
+            {% else %}
+                bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
+            {% endif %}
+        ">
+            {% if interaction.is_liked %}
+                👍 Понравилось
+            {% else %}
+                👍 Нравится
+            {% endif %}
+        </button>
+    </form>
+
+</div>

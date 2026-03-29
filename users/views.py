@@ -3,20 +3,29 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 
-from users.forms import CustomUserLoginForm, CustomUserCreationForm
+from users.forms import CustomUserLoginForm, CustomUserCreationForm, CustomUserUpdateForm
 
 
 # Create your views here.
 @login_required(login_url="/users/login/")
 def profile(request):
+    if request.method == "POST":
+        form = CustomUserUpdateForm(instance=request.user, data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+        else:
+            print(form.errors)
+    else:
+        form = CustomUserUpdateForm(instance=request.user)
+
 
     context = {
         "title": f"Профиль - {request.user.first_name} {request.user.last_name}",
+        "user": request.user,
+        "form": form,
     }
     return render(request, "users/profile.html", context)
 
-def edit_profile(request):
-    return render(request, "users/edit_profile.html")
 
 
 

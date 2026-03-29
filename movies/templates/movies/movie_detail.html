@@ -71,6 +71,11 @@
 
             </div>
 
+            <!-- ACTION BUTTONS -->
+            {% if user.is_authenticated %}
+                    {% include "components/movie_actions.html" %}
+            {% endif %}
+
             <!-- META -->
             <div class="flex flex-wrap gap-5 text-sm text-gray-400">
                 {% if movie.release_date %}

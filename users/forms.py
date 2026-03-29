@@ -3,14 +3,11 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.html import strip_tags
 from django.core.validators import RegexValidator
-
-User = get_user_model()
-
-
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
+
+User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(

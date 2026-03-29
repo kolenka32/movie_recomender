@@ -6,19 +6,14 @@ from movies.models import Movie, Genre
 # Create your models here.
 
 class UserMovieInteraction(models.Model):
-    RATING_CHOICES = [
-        (1, "Не понравилось"),
-        (2, "Норм"),
-        (3, "Понравилось"),
-        (4, "Очень понравилось"),
-        (5, "Любимое"),
-    ]
 
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
-    rating = models.IntegerField(choices=RATING_CHOICES, null=True)
+    is_liked = models.BooleanField(default=False)
     is_favorite = models.BooleanField(default=False)
+
+    is_watched = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
