@@ -11,13 +11,13 @@
 
         <button type="submit"
             class="px-5 py-2 rounded-xl border transition
-            {% if interaction.is_watched %}
+            {% if interaction and interaction.is_watched %}
                 bg-green-500/20 border-green-500 text-green-400
             {% else %}
                 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
             {% endif %}
         ">
-            {% if interaction.is_watched %}
+            {% if interaction and interaction.is_watched %}
                 ✔ Просмотрено
             {% else %}
                 👁 Смотреть
@@ -36,13 +36,13 @@
 
         <button type="submit"
             class="px-5 py-2 rounded-xl border transition
-            {% if interaction.is_favorite %}
+            {% if interaction and interaction.is_favorite %}
                 bg-red-500/20 border-red-500 text-red-400
             {% else %}
                 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
             {% endif %}
         ">
-            {% if interaction.is_favorite %}
+            {% if interaction and interaction.is_favorite %}
                 ❤️ В избранном
             {% else %}
                 🤍 В избранное
@@ -61,13 +61,13 @@
 
         <button type="submit"
             class="px-5 py-2 rounded-xl border transition
-            {% if interaction.is_liked %}
+            {% if interaction and interaction.is_liked %}
                 bg-yellow-500/20 border-yellow-500 text-yellow-400
             {% else %}
                 bg-white/5 border-white/10 text-gray-300 hover:bg-white/10
             {% endif %}
         ">
-            {% if interaction.is_liked %}
+            {% if interaction and interaction.is_liked %}
                 👍 Понравилось
             {% else %}
                 👍 Нравится

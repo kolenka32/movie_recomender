@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 from django.db.models import Count, Q
 from django.contrib.postgres.search import TrigramSimilarity
 
+
 import requests
 from datetime import date
 import random
@@ -17,6 +18,7 @@ import traceback
 from .models import Movie
 from .services.tmdb import search_movie, get_movie_detail
 from .services.movie_service import save_movie_from_tmdb, get_recommendation_for_user
+from .services.search import smart_search
 
 from users.models import UserMovieInteraction
 
@@ -27,18 +29,22 @@ class HomeView(TemplateView):
 
     def get(self, request, *args, **kwargs):
 
-        query = request.POST.get("q")
+        query = request.GET.get("q")
         context = {}
 
         if query:
             try:
-                data = search_movie(query)
-                results = data.get("results", [])
+                data = smart_search(query)
+                movies = smart_search(query)
 
-                movies = []
-                for item in results[:10]:
-                    movie = save_movie_from_tmdb(item)
-                    movies.append(movie)
+                hero_movie = movies[0] if movies else None
+
+                context.update({
+                    'query': query,
+                    'hero_movie': hero_movie,
+                    'similar_movies': movies[1:],
+                })
+
                 hero_movie = movies[0] if movies else None
 
                 context.update({
@@ -103,10 +109,10 @@ class MovieDetailView(TemplateView):
         interaction = None
 
         if request.user.is_authenticated and movie:
-            interaction, _ = UserMovieInteraction.objects.get_or_create(
+            interaction = UserMovieInteraction.objects.filter(
                 user=request.user,
                 movie=movie
-            )
+            ).first()
 
         return TemplateResponse(request, self.template_name, {
             "movie": movie,
@@ -127,7 +133,6 @@ class MovieDetailView(TemplateView):
             movie=movie
         )
 
-        # 🔥 toggle логика
         if action == "watched":
             interaction.is_watched = not interaction.is_watched
 
@@ -139,7 +144,6 @@ class MovieDetailView(TemplateView):
 
         interaction.save()
 
-        # 👉 возвращаем только кнопки!
         html = render_to_string(
             "components/movie_actions.html",
             {
