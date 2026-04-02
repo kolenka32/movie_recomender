@@ -153,6 +153,16 @@ class CustomUserLoginForm(AuthenticationForm):
 
 
 class CustomUserUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={
+        'class': 'text-neutral-300 text-sm font-medium block',
+    }))
+    last_name = forms.CharField(label='Фамилия', widget=forms.TextInput(attrs={
+        'class': 'text-neutral-300 text-sm font-medium block',
+    }))
+    email = forms.CharField(label='Почта', widget=forms.TextInput(attrs={
+        'class': 'text-neutral-300 text-sm font-medium block',
+    }))
+
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name')

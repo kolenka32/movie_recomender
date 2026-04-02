@@ -75,7 +75,7 @@ def fetch_bulk_content(limit=4000):
 def import_mass_movies():
 
     total_saved = 0
-    years = range(2011, 2026) #импорт фильмов по годам
+    years = range(2020, 2026) #импорт фильмов по годам
 
     for year in years:
         print("YEAR:", year)

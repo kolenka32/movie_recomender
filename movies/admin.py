@@ -15,7 +15,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ("title", "original_title", "release_date", "vote_average", "poster_preview", "backdrop_preview")
+    list_display = ("id", "title", "original_title", "release_date", "vote_average", "poster_preview", "backdrop_preview")
     list_filter = ("release_date", "adult", "genres")
     search_fields = ("id", "title", "original_title")
     filter_horizontal = ("genres",)

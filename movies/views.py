@@ -61,7 +61,7 @@ class HomeView(TemplateView):
             top_movies = Movie.objects.order_by("-vote_average")[:20]
             new_movies = Movie.objects.order_by("-release_date")[:20]
             hero_movie = random.choice(popular_movies) if popular_movies else None
-
+            
             context.update({
                 "popular_movies": popular_movies,
                 "top_movies": top_movies,

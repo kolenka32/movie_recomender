@@ -4,131 +4,279 @@
 
 {% block content %}
 
-<div class="max-w-7xl mx-auto px-4 py-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
-    <!-- BACKDROP -->
+    <!-- BACKDROP SECTION with parallax effect -->
     {% if movie.local_backdrop %}
-    <div class="relative rounded-3xl overflow-hidden mb-12">
+    <div class="relative rounded-2xl overflow-hidden mb-12 group">
+        <!-- IMAGE with zoom effect -->
+        <div class="relative h-[50vh] min-h-[400px] lg:h-[60vh] overflow-hidden">
+            <img
+                src="{{ movie.local_backdrop.url }}"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                alt="{{ movie.title }} backdrop"
+            >
 
-        <!-- IMAGE -->
-        <img
-            src="{{ movie.local_backdrop.url }}"
-            class="w-full h-[420px] object-cover scale-105"
-        >
+            <!-- Enhanced gradient overlays -->
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-gray-900/50 via-transparent to-transparent"></div>
 
-        <!-- DARK OVERLAY -->
-        <div class="absolute inset-0 bg-black/60"></div>
-
-        <!-- GRADIENT FADE -->
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"></div>
-
-        <!-- SOFT BLUR LAYER -->
-        <div class="absolute inset-0 backdrop-blur-[2px]"></div>
-
-        <!-- TITLE -->
-        <div class="absolute bottom-0 p-10">
-            <h1 class="text-5xl font-bold text-white tracking-tight">
-                {{ movie.title }}
-            </h1>
-
-            {% if movie.original_title %}
-                <p class="text-gray-400 mt-2 text-lg">
-                    {{ movie.original_title }}
-                </p>
-            {% endif %}
+            <!-- Blur effect at bottom -->
+            <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
         </div>
 
+        <!-- Floating title card -->
+        <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12">
+            <div class="max-w-4xl">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-red-600/90 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-white text-sm font-semibold">Сейчас в трендах</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-white tracking-tight drop-shadow-2xl mb-3">
+                    {{ movie.title }}
+                </h1>
+
+                {% if movie.original_title and movie.original_title != movie.title %}
+                    <p class="text-gray-300 text-lg sm:text-xl opacity-90">
+                        {{ movie.original_title }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
     </div>
     {% endif %}
 
-    <!-- MAIN INFO -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <!-- MAIN CONTENT with glassmorphism -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative z-10">
 
-        <!-- POSTER -->
-        <div>
-            {% if movie.local_poster %}
-                <img src="{{ movie.local_poster.url }}"
-                     class="rounded-3xl shadow-2xl">
-            {% else %}
-                <img src="{{ movie.poster_url }}"
-                     class="rounded-3xl shadow-2xl">
-            {% endif %}
+        <!-- POSTER SECTION with hover effects and sticky -->
+        <div class="lg:sticky lg:top-24 self-start">
+            <div class="relative group">
+                {% if movie.local_poster %}
+                    <img src="{{ movie.local_poster.url }}"
+                         class="rounded-2xl shadow-2xl w-full transform group-hover:scale-105 transition-transform duration-300"
+                         alt="{{ movie.title }} poster">
+                {% else %}
+                    <img src="{{ movie.poster_url }}"
+                         class="rounded-2xl shadow-2xl w-full transform group-hover:scale-105 transition-transform duration-300"
+                         alt="{{ movie.title }} poster">
+                {% endif %}
+
+                <!-- Poster overlay with rating -->
+                {% if movie.vote_average %}
+                <div class="absolute top-4 right-4 bg-black/80 backdrop-blur-md rounded-full px-4 py-2 flex items-center gap-2 border border-yellow-500/30">
+                    <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="text-white font-bold text-lg">{{ movie.vote_average|floatformat:1 }}</span>
+                    <span class="text-gray-400 text-sm">/10</span>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
-        <!-- DETAILS -->
-        <div class="md:col-span-2 space-y-8">
+        <!-- DETAILS SECTION with vertical scroll -->
+        <div class="lg:col-span-2 space-y-8 max-h-[calc(100vh-120px)] overflow-y-auto pr-4 custom-scroll">
 
-            <!-- RATING (premium style) -->
-            <div class="flex items-center gap-6">
-
-                <div class="px-5 py-2 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 text-white text-sm">
-                    {{ movie.vote_average }}
+            <!-- RATING AND METRICS -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                    <div class="text-2xl font-bold text-yellow-500">{{ movie.vote_average|floatformat:1 }}</div>
+                    <div class="text-xs text-gray-400 mt-1">Рейтинг</div>
                 </div>
 
-                <div class="text-gray-500 text-sm">
-                    {{ movie.vote_count }} оценок
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                    <div class="text-2xl font-bold text-white">{{ movie.vote_count|default:"0" }}</div>
+                    <div class="text-xs text-gray-400 mt-1">Оценок</div>
                 </div>
 
+                {% if movie.release_date %}
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                    <div class="text-2xl font-bold text-white">{{ movie.release_date|date:"Y" }}</div>
+                    <div class="text-xs text-gray-400 mt-1">Год выпуска</div>
+                </div>
+                {% endif %}
             </div>
 
             <!-- ACTION BUTTONS -->
             {% if user.is_authenticated %}
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
                     {% include "components/movie_actions.html" %}
+                </div>
             {% endif %}
 
-            <!-- META -->
-            <div class="flex flex-wrap gap-5 text-sm text-gray-400">
-                {% if movie.release_date %}
-                    <span>{{ movie.release_date }}</span>
-                {% endif %}
+            <!-- MOVIE METADATA -->
+            <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 space-y-4">
+                <div class="flex flex-wrap gap-6 text-sm">
+                    {% if movie.release_date %}
+                    <div class="flex items-center gap-2 text-gray-300">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>{{ movie.release_date|date:"d F Y" }}</span>
+                    </div>
+                    {% endif %}
 
-                {% if movie.adult %}
-                    <span class="text-red-400">18+</span>
+                    {% if movie.adult %}
+                    <div class="flex items-center gap-2">
+                        <span class="bg-red-600/20 text-red-400 px-3 py-1 rounded-full text-xs font-semibold border border-red-600/30">
+                            18+
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- GENRES -->
+                {% if movie.genres.all %}
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 mb-3">Жанры</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for genre in movie.genres.all %}
+                            <span class="bg-gradient-to-r from-red-600/20 to-red-500/20 border border-red-500/30 px-4 py-2 rounded-xl text-sm text-gray-200 hover:from-red-600/30 hover:to-red-500/30 transition-all cursor-default">
+                                {{ genre.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
                 {% endif %}
             </div>
 
-            <!-- GENRES -->
-            {% if movie.genres.all %}
-            <div class="flex flex-wrap gap-3">
-                {% for genre in movie.genres.all %}
-                    <span class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-xl text-sm text-gray-200 backdrop-blur">
-                        {{ genre.name }}
-                    </span>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- OVERVIEW (premium glass) -->
+            <!-- OVERVIEW with enhanced design -->
             {% if movie.overview %}
             <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-transparent rounded-2xl"></div>
+                <div class="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-red-600 rounded-full"></div>
+                        <h2 class="text-2xl font-bold text-white">
+                            О фильме
+                        </h2>
+                    </div>
 
-                <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl"></div>
-
-                <div class="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl">
-
-                    <h2 class="text-2xl font-semibold mb-4 text-white">
-                        О фильме
-                    </h2>
-
-                    <p class="text-gray-300 leading-relaxed text-lg">
+                    <p class="text-gray-300 leading-relaxed text-base sm:text-lg">
                         {{ movie.overview }}
                     </p>
 
+                    <!-- Read more button for long overviews -->
+                    {% if movie.overview|length > 500 %}
+                    <button onclick="toggleOverview()" class="mt-4 text-red-500 hover:text-red-400 text-sm font-semibold transition-colors">
+                        Читать полностью
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
 
+            <!-- ADDITIONAL INFO (if available) -->
+            {% if movie.tagline %}
+            <div class="bg-gradient-to-r from-red-600/10 to-orange-600/10 border border-red-500/20 rounded-2xl p-6">
+                <p class="text-gray-300 italic text-center text-lg">
+                    "{{ movie.tagline }}"
+                </p>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- BACK BUTTON -->
-    <div class="mt-14">
-        <a href="/"
-           class="inline-block bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 py-3 rounded-xl transition backdrop-blur">
-            ← Назад
+    <!-- BACK BUTTON with modern design -->
+    <div class="mt-12 pt-8 border-t border-white/10">
+        <a hx-get="{% url 'movies:index' %}"
+           hx-target="body"
+           hx-push-url="true"
+           class="inline-flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl transition-all duration-300 backdrop-blur cursor-pointer group">
+            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Вернуться на главную</span>
         </a>
     </div>
 
 </div>
+
+<!-- JavaScript for overview toggle and scroll effects -->
+<script>
+function toggleOverview() {
+    const overview = document.querySelector('.text-gray-300.leading-relaxed');
+    const button = event.target;
+
+    if (overview.classList.contains('line-clamp-5')) {
+        overview.classList.remove('line-clamp-5');
+        button.textContent = 'Свернуть';
+    } else {
+        overview.classList.add('line-clamp-5');
+        button.textContent = 'Читать полностью';
+    }
+}
+
+// Add line-clamp class if overview is long
+document.addEventListener('DOMContentLoaded', function() {
+    const overview = document.querySelector('.text-gray-300.leading-relaxed');
+    if (overview && overview.textContent.length > 500) {
+        overview.classList.add('line-clamp-5');
+    }
+});
+</script>
+
+<style>
+.line-clamp-5 {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Custom vertical scrollbar matching the home page style */
+.custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #ef4444 #1f2937;
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ef4444, #dc2626);
+    border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #dc2626, #b91c1c);
+}
+
+/* Smooth animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.grid > * {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.grid > *:nth-child(1) { animation-delay: 0.1s; }
+.grid > *:nth-child(2) { animation-delay: 0.2s; }
+
+/* Smooth scrolling for the entire page */
+html {
+    scroll-behavior: smooth;
+}
+</style>
 
 {% endblock %}

@@ -19,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(UserMovieInteraction)
 class UserMovieInteractionAdmin(admin.ModelAdmin):
-    list_display = ("user", "movie", "is_liked", "is_favorite", "created_at", "updated_at")
+    list_display = ("id", "user", "movie", "is_liked", "is_favorite", "created_at", "updated_at")
     list_filter = ("is_liked", "is_favorite", "created_at", "updated_at")
     search_fields = ("user__username", "movie__title")
 
