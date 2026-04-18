@@ -30,20 +30,13 @@ class HomeView(TemplateView):
     def get(self, request, *args, **kwargs):
 
         query = request.GET.get("q")
-        context = {}
+        context = {
+            "title": 'Главная',
+        }
 
         if query:
             try:
-                data = smart_search(query)
                 movies = smart_search(query)
-
-                hero_movie = movies[0] if movies else None
-
-                context.update({
-                    'query': query,
-                    'hero_movie': hero_movie,
-                    'similar_movies': movies[1:],
-                })
 
                 hero_movie = movies[0] if movies else None
 
@@ -60,8 +53,9 @@ class HomeView(TemplateView):
             popular_movies = Movie.objects.order_by("-popularity")[:20]
             top_movies = Movie.objects.order_by("-vote_average")[:20]
             new_movies = Movie.objects.order_by("-release_date")[:20]
-            hero_movie = random.choice(popular_movies) if popular_movies else None
-            
+
+            hero_movie = random.choice(popular_movies) and random.choice(top_movies) and random.choice(new_movies) if popular_movies and top_movies and new_movies else None
+
             context.update({
                 "popular_movies": popular_movies,
                 "top_movies": top_movies,

@@ -44,35 +44,8 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-            <!-- Левая колонка - Статистика и подписка -->
+            <!-- Левая колонка - Статистика и жанры -->
             <div class="space-y-6">
-<!--                &lt;!&ndash; Карточка подписки &ndash;&gt;-->
-<!--                <div class="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6">-->
-<!--                    <div class="flex items-center justify-between mb-4">-->
-<!--                        <h2 class="text-white font-semibold text-lg">Подписка</h2>-->
-<!--                        <span class="px-3 py-1 bg-red-600/20 text-red-500 text-xs font-medium rounded-full">Премиум</span>-->
-<!--                    </div>-->
-<!--                    <div class="space-y-3">-->
-<!--                        <div class="flex justify-between text-sm">-->
-<!--                            <span class="text-neutral-400">Тариф</span>-->
-<!--                            <span class="text-white font-medium">Netflix Premium</span>-->
-<!--                        </div>-->
-<!--                        <div class="flex justify-between text-sm">-->
-<!--                            <span class="text-neutral-400">Статус</span>-->
-<!--                            <span class="text-green-500 font-medium">Активна</span>-->
-<!--                        </div>-->
-<!--                        <div class="flex justify-between text-sm">-->
-<!--                            <span class="text-neutral-400">Следующий платёж</span>-->
-<!--                            <span class="text-white">15 апреля 2026</span>-->
-<!--                        </div>-->
-<!--                        <div class="pt-3">-->
-<!--                            <button class="w-full py-2.5 bg-red-600 hover:bg-red-700 rounded-xl text-white text-sm font-medium transition-all">-->
-<!--                                Управлять подпиской-->
-<!--                            </button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
                 <!-- Карточка статистики -->
                 <div class="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
                     <h2 class="text-white font-semibold text-lg mb-4">Активность</h2>
@@ -87,6 +60,52 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Карточка выбора жанров -->
+                <div class="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-white font-semibold text-lg">Любимые жанры</h2>
+                        <span class="text-xs text-neutral-400">Выберите до 5 жанров</span>
+                    </div>
+
+                    <form method="post" action="{% url 'users:update_genres' %}" class="space-y-4" id="genresForm">
+                        {% csrf_token %}
+                        <div class="flex flex-wrap gap-2 max-h-64 overflow-y-auto pb-2 custom-scrollbar">
+                            {% for genre in all_genres %}
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox"
+                                           name="favorite_genres"
+                                           value="{{ genre.id }}"
+                                           {% if genre in favorite_genres %}checked{% endif %}
+                                           class="genre-checkbox hidden">
+                                    <span class="genre-tag inline-block px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200
+                                        {% if genre in favorite_genres %}
+                                            bg-red-600 text-white shadow-md shadow-red-900/30
+                                        {% else %}
+                                            bg-neutral-800/60 text-neutral-300 border border-white/5 hover:bg-neutral-700/60
+                                        {% endif %}">
+                                        {{ genre.name }}
+                                    </span>
+                                </label>
+                            {% empty %}
+                                <p class="text-neutral-400 text-sm">Жанры не найдены</p>
+                            {% endfor %}
+                        </div>
+
+                        <div class="flex gap-3 pt-3">
+                            <button type="submit" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="saveGenresBtn">
+                                Сохранить выбор
+                            </button>
+                            <button type="submit" id="clearGenresBtn" class="px-4 py-2 bg-neutral-800/80 hover:bg-neutral-700 rounded-xl text-white text-sm font-medium transition-all">
+                                Очистить
+                            </button>
+                        </div>
+                    </form>
+
+                    <p class="text-neutral-500 text-xs mt-3 text-center">
+                        <span class="text-red-400">★</span> — отмеченные жанры будут влиять на рекомендации
+                    </p>
+                </div>
             </div>
 
             <!-- Правая колонка - Настройки профиля -->
@@ -94,10 +113,10 @@
                 <!-- Форма редактирования профиля -->
                 <div class="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6 md:p-8">
                     <h2 class="text-white font-semibold text-lg mb-6">Личная информация</h2>
-                    
+
                     <form method="post" action="{% url 'users:profile' %}" class="space-y-5">
                         {% csrf_token %}
-                        
+
                         <!-- Имя и Фамилия -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-1.5">
@@ -114,7 +133,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            
+
                             <div class="space-y-1.5">
                                 <label for="{{ form.last_name.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
                                     {{ form.last_name.label }}
@@ -130,7 +149,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         <!-- Email -->
                         <div class="space-y-1.5">
                             <label for="{{ form.email.id_for_label }}" class="text-neutral-300 text-sm font-medium block">
@@ -146,7 +165,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Кнопки -->
                         <div class="flex gap-3 pt-4">
                             <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 rounded-xl text-white text-sm font-medium transition-all">
@@ -158,15 +177,13 @@
                         </div>
                     </form>
                 </div>
-                
+
                 <!-- История просмотров -->
                 <div class="bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6 md:p-8">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-white font-semibold text-lg">Недавние просмотры</h2>
-
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        <!-- Заглушки для фильмов/сериалов -->
                         {% for movie in watched_movies %}
                             <div class="group cursor-pointer">
                                 <a hx-get="{% url 'movies:movie_detail' movie.id %}"
@@ -185,7 +202,6 @@
                                                 </svg>
                                             </div>
                                         {% endif %}
-
                                     </div>
 
                                     <div class="mt-1.5">
@@ -206,7 +222,6 @@
                                             {% endif %}
                                         </div>
 
-                                        <!-- Кнопка "Продолжить просмотр" (только если фильм не досмотрен до конца) -->
                                         {% with interaction=movie.user_movie_interactions.first %}
                                             {% if interaction and interaction.watched_percentage < 100 %}
                                                 <div class="mt-2">
@@ -252,13 +267,13 @@
             transform: translateY(0);
         }
     }
-    
+
     .bg-black\/60, .bg-black\/70 {
         animation: subtleFadeUp 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
     }
-    
+
     /* Стили для полей формы */
-    input {
+    input:not([type="checkbox"]) {
         width: 100%;
         background-color: rgb(23 23 23 / 0.8);
         border: 1px solid rgb(64 64 64);
@@ -268,26 +283,121 @@
         transition: all 0.2s;
         font-size: 0.875rem;
     }
-    
-    input:focus {
+
+    input:focus:not([type="checkbox"]) {
         outline: none;
         border-color: #e50914;
         box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
     }
-    
-    input.error {
+
+    input.error:not([type="checkbox"]) {
         border-color: #e50914 !important;
     }
-    
-    input[readonly] {
+
+    input[readonly]:not([type="checkbox"]) {
         opacity: 0.7;
         cursor: not-allowed;
     }
-    
-    /* Скрываем крестик в поле пароля */
-    input[type="password"]::-ms-reveal,
-    input[type="password"]::-ms-clear {
-        display: none;
+
+    /* Кастомный скроллбар */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(64, 64, 64, 0.3);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(229, 9, 20, 0.5);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(229, 9, 20, 0.7);
+    }
+
+    /* Анимация для чекбоксов */
+    .genre-tag {
+        user-select: none;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .genre-tag:active {
+        transform: scale(0.95);
     }
 </style>
+
+<script>
+    // Ограничение выбора до 5 жанров
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.genre-checkbox');
+        const saveBtn = document.getElementById('saveGenresBtn');
+        const clearBtn = document.getElementById('clearGenresBtn');
+        const form = document.getElementById('genresForm');
+
+        function updateCheckboxCount() {
+            const checkedCount = document.querySelectorAll('.genre-checkbox:checked').length;
+
+            if (checkedCount >= 5) {
+                checkboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        cb.disabled = true;
+                        cb.closest('label').querySelector('.genre-tag').style.opacity = '0.5';
+                    }
+                });
+                saveBtn.disabled = false;
+            } else {
+                checkboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.closest('label').querySelector('.genre-tag').style.opacity = '1';
+                });
+                saveBtn.disabled = false;
+            }
+        }
+
+        function updateTagStyles() {
+            checkboxes.forEach(cb => {
+                const tag = cb.closest('label').querySelector('.genre-tag');
+                if (cb.checked) {
+                    tag.className = 'genre-tag inline-block px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 bg-red-600 text-white shadow-md shadow-red-900/30';
+                } else {
+                    tag.className = 'genre-tag inline-block px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 bg-neutral-800/60 text-neutral-300 border border-white/5 hover:bg-neutral-700/60';
+                }
+            });
+        }
+
+        // Обработчик изменения чекбоксов
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                updateCheckboxCount();
+                updateTagStyles();
+            });
+        });
+
+        // Очистка всех выбранных жанров
+        clearBtn.addEventListener('click', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                cb.disabled = false;
+            });
+            updateCheckboxCount();
+            updateTagStyles();
+        });
+
+        // Предотвращение отправки формы если выбрано больше 5
+        form.addEventListener('submit', function(e) {
+            const checkedCount = document.querySelectorAll('.genre-checkbox:checked').length;
+            if (checkedCount > 5) {
+                e.preventDefault();
+                alert('Вы можете выбрать не более 5 любимых жанров');
+            }
+        });
+
+        // Инициализация
+        updateCheckboxCount();
+    });
+</script>
 {% endblock %}

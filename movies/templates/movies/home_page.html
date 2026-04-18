@@ -195,6 +195,40 @@
             </div>
         {% endif %}
 
+    <!-- рпекомендованные фильмы на основе любимых жанров -->
+        {% if user.is_authenticated and recommended_movies %}
+
+        <div class="animate-fade-in-up">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                        🔥 Рекомендации
+                    </h2>
+                    <p class="text-gray-400 text-sm">Самые рекомендованные фильмы</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="popular-prev p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <button class="popular-next p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="popular-carousel flex gap-6 overflow-x-auto pb-6 scroll-smooth">
+                {% for movie in recommended_movies %}
+                    {% include "components/movie_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
+
+        {% endif %}
+
         <!-- POPULAR SECTION with gradient header -->
         <div class="animate-fade-in-up">
             <div class="flex items-center justify-between mb-6">
